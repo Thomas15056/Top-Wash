@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TopWash — Pressure Washing</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,300;0,400;0,600;0,700;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0a1628;
+    --deep: #061020;
+    --blue: #1565c0;
+    --sky: #2196f3;
+    --ice: #b3e5fc;
+    --white: #f0f6ff;
+    --gray: #8899aa;
+    --accent: #00b4d8;
+    --bright: #48cae4;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--deep);
+    color: var(--white);
+    font-family: 'Barlow', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+  }
+
+  /* ─── NOISE OVERLAY ─────────────────────────────── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.3;
+  }
+
+  /* ─── NAV ────────────────────────────────────────── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.2rem 4rem;
+    background: rgba(6, 16, 32, 0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(33, 150, 243, 0.15);
+  }
+
+  .logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem;
+    letter-spacing: 0.12em;
+    color: var(--white);
+    text-decoration: none;
+  }
+  .logo span { color: var(--accent); }
+  .site-logo { height: 72px; width: auto; display: block; }
+  .footer-logo-img { height: 54px; width: auto; display: block; }
+
+  /* Logo responsive sizing */
+  @media (max-width: 900px) {
+    .site-logo { height: 48px; }
+    .footer-logo-img { height: 40px; }
+  }
+
+  nav ul {
+    list-style: none;
+    display: flex;
+    gap: 2.5rem;
+    align-items: center;
+  }
+  nav ul a {
+    color: var(--gray);
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  nav ul a:hover { color: var(--accent); }
+
+  .nav-cta {
+    background: var(--accent) !important;
+    color: var(--navy) !important;
+    padding: 0.55rem 1.4rem;
+    border-radius: 2px;
+    font-weight: 700 !important;
+    transition: background 0.2s !important, transform 0.2s !important;
+  }
+  .nav-cta:hover { background: var(--bright) !important; transform: translateY(-1px); }
+
+  /* ─── HERO ───────────────────────────────────────── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    padding: 8rem 4rem 4rem;
+  }
+
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 70% 50%, rgba(21, 101, 192, 0.25) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 40% at 20% 80%, rgba(0, 180, 216, 0.15) 0%, transparent 60%),
+      linear-gradient(160deg, #061020 0%, #0a1628 50%, #061020 100%);
+  }
+
+  /* Water jet lines */
+  .hero-bg::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      repeating-linear-gradient(
+        -35deg,
+        transparent,
+        transparent 80px,
+        rgba(0, 180, 216, 0.03) 80px,
+        rgba(0, 180, 216, 0.03) 81px
+      );
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 760px;
+  }
+
+  .hero-tag {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1.5rem;
+    border-left: 3px solid var(--accent);
+    padding-left: 0.8rem;
+  }
+
+  h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(4.5rem, 12vw, 9rem);
+    line-height: 0.92;
+    letter-spacing: 0.02em;
+    color: var(--white);
+    margin-bottom: 0.1em;
+  }
+  h1 .outline {
+    -webkit-text-stroke: 2px var(--accent);
+    color: transparent;
+  }
+
+  .hero-sub {
+    font-size: 1.15rem;
+    font-weight: 300;
+    color: rgba(176, 210, 255, 0.7);
+    line-height: 1.6;
+    margin-top: 1.5rem;
+    max-width: 480px;
+    margin-bottom: 2.5rem;
+  }
+
+  .hero-btns {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: var(--navy);
+    font-family: 'Barlow', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 1rem 2.2rem;
+    border: none;
+    cursor: pointer;
+    border-radius: 2px;
+    text-decoration: none;
+    display: inline-block;
+    transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 0 30px rgba(0, 180, 216, 0.35);
+  }
+  .btn-primary:hover {
+    background: var(--bright);
+    transform: translateY(-2px);
+    box-shadow: 0 0 45px rgba(0, 180, 216, 0.55);
+  }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--white);
+    font-family: 'Barlow', sans-serif;
+    font-weight: 600;
+    font-size: 0.9rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 1rem 2.2rem;
+    border: 1px solid rgba(255,255,255,0.2);
+    cursor: pointer;
+    border-radius: 2px;
+    text-decoration: none;
+    display: inline-block;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* Animated water drops */
+  .drops {
+    position: absolute;
+    right: 5%;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 420px;
+    height: 420px;
+    z-index: 1;
+  }
+
+  .drop {
+    position: absolute;
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    background: radial-gradient(ellipse at 35% 35%, rgba(72, 202, 228, 0.6), rgba(0, 100, 180, 0.15));
+    border: 1px solid rgba(72, 202, 228, 0.3);
+    animation: float 6s ease-in-out infinite;
+  }
+  .drop:nth-child(1) { width: 220px; height: 260px; left: 100px; top: 80px; animation-delay: 0s; }
+  .drop:nth-child(2) { width: 100px; height: 120px; left: 20px; top: 200px; animation-delay: -2s; opacity: 0.6; }
+  .drop:nth-child(3) { width: 70px; height: 85px; left: 300px; top: 280px; animation-delay: -4s; opacity: 0.4; }
+  .drop:nth-child(4) { width: 40px; height: 48px; left: 350px; top: 120px; animation-delay: -1s; opacity: 0.3; }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    33% { transform: translateY(-18px) rotate(3deg); }
+    66% { transform: translateY(10px) rotate(-2deg); }
+  }
+
+  /* Spray lines */
+  .spray {
+    position: absolute;
+    right: 0;
+    top: 35%;
+    width: 350px;
+    height: 3px;
+    z-index: 1;
+    overflow: visible;
+  }
+  .spray::before, .spray::after {
+    content: '';
+    position: absolute;
+    height: 1px;
+    right: 0;
+    background: linear-gradient(to left, transparent, rgba(0,180,216,0.5));
+    animation: spray-anim 3s ease-in-out infinite;
+  }
+  .spray::before { width: 300px; top: 0; }
+  .spray::after { width: 200px; top: 8px; animation-delay: -1.5s; opacity: 0.6; }
+  @keyframes spray-anim {
+    0%, 100% { opacity: 0; transform: scaleX(0.3); transform-origin: right; }
+    50% { opacity: 1; transform: scaleX(1); }
+  }
+
+  /* ─── STATS BAR ──────────────────────────────────── */
+  .stats-bar {
+    background: rgba(21, 101, 192, 0.12);
+    border-top: 1px solid rgba(33, 150, 243, 0.15);
+    border-bottom: 1px solid rgba(33, 150, 243, 0.15);
+    padding: 2rem 4rem;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2rem;
+    position: relative;
+    z-index: 2;
+  }
+
+  .stat {
+    text-align: center;
+    padding: 1rem;
+  }
+  .stat-number {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 3rem;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+    line-height: 1;
+  }
+  .stat-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gray);
+    margin-top: 0.4rem;
+  }
+
+  /* ─── SERVICES ───────────────────────────────────── */
+  .services {
+    padding: 7rem 4rem;
+    position: relative;
+  }
+
+  .services::before {
+    content: 'SERVICES';
+    position: absolute;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18vw;
+    color: rgba(33, 150, 243, 0.03);
+    top: 3rem;
+    left: -2rem;
+    pointer-events: none;
+    letter-spacing: 0.05em;
+    line-height: 1;
+  }
+
+  .section-header {
+    margin-bottom: 4rem;
+  }
+  .section-tag {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--accent);
+    display: block;
+    margin-bottom: 0.8rem;
+  }
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    line-height: 1;
+    letter-spacing: 0.02em;
+  }
+
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5px;
+    background: rgba(33,150,243,0.08);
+  }
+
+  .service-card {
+    background: var(--navy);
+    padding: 3rem 2.5rem;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.3s;
+    cursor: default;
+  }
+  .service-card::before {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s ease;
+  }
+  .service-card:hover { background: rgba(21, 101, 192, 0.18); }
+  .service-card:hover::before { transform: scaleX(1); }
+
+  .service-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+    display: block;
+  }
+  .service-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.6rem;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.8rem;
+    color: var(--white);
+  }
+  .service-desc {
+    font-size: 0.9rem;
+    color: var(--gray);
+    line-height: 1.7;
+  }
+  .service-price {
+    margin-top: 1.5rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  /* ─── WHY US ─────────────────────────────────────── */
+  .why {
+    padding: 7rem 4rem;
+    background: linear-gradient(160deg, rgba(21,101,192,0.08) 0%, transparent 60%);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6rem;
+    align-items: center;
+  }
+
+  .why-visual {
+    position: relative;
+    height: 420px;
+  }
+  .why-box {
+    position: absolute;
+    border: 1px solid rgba(33, 150, 243, 0.2);
+    border-radius: 3px;
+    background: rgba(21, 101, 192, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1rem;
+    letter-spacing: 0.1em;
+    color: rgba(255,255,255,0.3);
+    overflow: hidden;
+  }
+  .why-box::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(0,180,216,0.07), transparent);
+  }
+  .why-box-1 { width: 65%; height: 65%; top: 0; left: 0; }
+  .why-box-2 { width: 45%; height: 45%; bottom: 0; right: 0; border-color: rgba(0,180,216,0.3); }
+  .why-box-3 { width: 30%; height: 30%; bottom: 10%; left: 55%; }
+
+  .why-box-2 .why-small-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: inherit;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+    pointer-events: none;
+  }
+
+  /* Remove small blue overlay inside .why-box-2 and ensure image sits on top */
+  .why-box-2 { background: transparent; border-color: transparent; }
+  .why-box-2::before { display: none; }
+  .why-box-2 .why-small-img { z-index: 2; }
+
+  .why-box-1 .big-num {
+    font-size: 6rem;
+    color: rgba(0, 180, 216, 0.12);
+    position: absolute;
+  }
+
+  .why-box-1 .why-big-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.12;
+    pointer-events: none;
+  }
+
+  /* Remove tint/overlay for the main visual box and show the actual image */
+  .why-box-1 { background: transparent; border-color: transparent; }
+  .why-box-1::before { display: none; }
+  .why-box-1 .why-big-img { opacity: 1; }
+
+  .badge {
+    position: absolute;
+    top: 35%;
+    right: -20px;
+    background: var(--accent);
+    color: var(--navy);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 0.85rem;
+    letter-spacing: 0.12em;
+    padding: 0.5rem 1rem;
+    z-index: 2;
+    box-shadow: 0 0 25px rgba(0,180,216,0.4);
+  }
+
+  .why-list {
+    list-style: none;
+    margin-top: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  .why-item {
+    display: flex;
+    gap: 1.2rem;
+    align-items: flex-start;
+  }
+  .why-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.8rem;
+    color: var(--accent);
+    opacity: 0.4;
+    min-width: 2.5rem;
+    line-height: 1;
+  }
+  .why-text strong {
+    display: block;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--white);
+    margin-bottom: 0.25rem;
+  }
+  .why-text p {
+    font-size: 0.85rem;
+    color: var(--gray);
+    line-height: 1.6;
+  }
+
+  /* ─── PROCESS ────────────────────────────────────── */
+  .process {
+    padding: 7rem 4rem;
+  }
+  .process-steps {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    margin-top: 4rem;
+    position: relative;
+  }
+  .process-steps::before {
+    content: '';
+    position: absolute;
+    top: 2.2rem;
+    left: 12%;
+    right: 12%;
+    height: 1px;
+    background: linear-gradient(to right, transparent, rgba(0,180,216,0.4), transparent);
+  }
+  .step {
+    text-align: center;
+    padding: 0 1.5rem;
+    position: relative;
+  }
+  .step-circle {
+    width: 4.5rem;
+    height: 4.5rem;
+    border: 1px solid rgba(0,180,216,0.4);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    background: var(--navy);
+    position: relative;
+    z-index: 1;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.5rem;
+    color: var(--accent);
+    transition: background 0.3s, box-shadow 0.3s;
+  }
+  .step:hover .step-circle {
+    background: rgba(0,180,216,0.15);
+    box-shadow: 0 0 25px rgba(0,180,216,0.3);
+  }
+  .step-title {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--white);
+    margin-bottom: 0.5rem;
+  }
+  .step-desc {
+    font-size: 0.82rem;
+    color: var(--gray);
+    line-height: 1.6;
+  }
+
+  /* ─── TESTIMONIALS ───────────────────────────────── */
+  .testimonials {
+    padding: 7rem 4rem;
+    background: rgba(10, 22, 40, 0.8);
+    position: relative;
+    overflow: hidden;
+  }
+  .testimonials::before {
+    content: '❝';
+    position: absolute;
+    font-size: 30vw;
+    color: rgba(33,150,243,0.03);
+    top: -5%;
+    right: -2%;
+    line-height: 1;
+    pointer-events: none;
+  }
+  .testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-top: 4rem;
+  }
+  .testimonial {
+    background: rgba(21, 101, 192, 0.08);
+    border: 1px solid rgba(33,150,243,0.12);
+    padding: 2.5rem;
+    position: relative;
+    border-radius: 2px;
+    transition: border-color 0.3s;
+  }
+  .testimonial:hover { border-color: rgba(0,180,216,0.3); }
+  .stars {
+    color: var(--accent);
+    font-size: 0.85rem;
+    letter-spacing: 0.15em;
+    margin-bottom: 1rem;
+  }
+  .testimonial p {
+    font-size: 0.9rem;
+    color: rgba(176, 210, 255, 0.75);
+    line-height: 1.7;
+    font-style: italic;
+    margin-bottom: 1.5rem;
+  }
+  .reviewer {
+    font-weight: 600;
+    font-size: 0.82rem;
+    color: var(--white);
+    letter-spacing: 0.05em;
+  }
+  .reviewer span {
+    display: block;
+    color: var(--gray);
+    font-weight: 300;
+    font-size: 0.78rem;
+    margin-top: 0.15rem;
+  }
+
+  /* ─── CTA ────────────────────────────────────────── */
+  .cta-section {
+    padding: 7rem 4rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .cta-section::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 70% 80% at 50% 50%, rgba(0,180,216,0.12) 0%, transparent 70%);
+  }
+  .cta-section h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.5rem, 6vw, 5rem);
+    letter-spacing: 0.02em;
+    margin-bottom: 1rem;
+    position: relative;
+  }
+  .cta-section p {
+    color: var(--gray);
+    font-size: 1rem;
+    margin-bottom: 2.5rem;
+    position: relative;
+  }
+  .cta-section .btn-primary { position: relative; font-size: 1rem; padding: 1.2rem 3rem; }
+
+  /* Phone bar */
+  .phone-bar {
+    margin-top: 2.5rem;
+    position: relative;
+  }
+  .phone-bar a {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.5rem;
+    color: var(--white);
+    text-decoration: none;
+    letter-spacing: 0.1em;
+    transition: color 0.2s;
+  }
+  .phone-bar a:hover { color: var(--accent); }
+  .phone-bar .phone-label {
+    display: block;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gray);
+    margin-bottom: 0.3rem;
+  }
+
+  /* ─── FOOTER ─────────────────────────────────────── */
+  footer {
+    background: var(--deep);
+    border-top: 1px solid rgba(33,150,243,0.1);
+    padding: 3rem 4rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  .footer-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.6rem;
+    letter-spacing: 0.1em;
+    color: var(--white);
+  }
+  .footer-logo span { color: var(--accent); }
+  footer p {
+    font-size: 0.8rem;
+    color: var(--gray);
+  }
+  .footer-links {
+    display: flex;
+    gap: 2rem;
+  }
+  .footer-links a {
+    color: var(--gray);
+    text-decoration: none;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  .footer-links a:hover { color: var(--accent); }
+
+  /* ─── SCROLL ANIMATIONS ──────────────────────────── */
+  .fade-up {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .fade-up.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ─── RESPONSIVE ─────────────────────────────────── */
+  @media (max-width: 900px) {
+    nav { padding: 1rem 1.5rem; }
+    nav ul { display: none; }
+    .hero { padding: 7rem 1.5rem 3rem; }
+    .drops { display: none; }
+    .stats-bar { grid-template-columns: repeat(2, 1fr); padding: 2rem 1.5rem; }
+    .services { padding: 5rem 1.5rem; }
+    .services-grid { grid-template-columns: 1fr; }
+    .why { grid-template-columns: 1fr; padding: 5rem 1.5rem; gap: 3rem; }
+    .why-visual { display: none; }
+    .process { padding: 5rem 1.5rem; }
+    .process-steps { grid-template-columns: repeat(2, 1fr); gap: 2rem; }
+    .process-steps::before { display: none; }
+    .testimonials { padding: 5rem 1.5rem; }
+    .testimonials-grid { grid-template-columns: 1fr; }
+    .cta-section { padding: 5rem 1.5rem; }
+    footer { padding: 2rem 1.5rem; flex-direction: column; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="logo"><img src="assets/images/logo.png" srcset="assets/images/logo@2x.png 2x" alt="TopWash logo" class="site-logo"></a>
+  <ul>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#why">About</a></li>
+    <li><a href="#process">Process</a></li>
+    <li><a href="#contact" class="nav-cta">Get a Quote</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="drops">
+    <div class="drop"></div>
+    <div class="drop"></div>
+    <div class="drop"></div>
+    <div class="drop"></div>
+  </div>
+  <div class="spray"></div>
+  <div class="hero-content">
+    <span class="hero-tag">Professional Pressure Washing</span>
+    <h1>We<br><span class="outline">Blast</span><br>Dirt.</h1>
+    <p class="hero-sub">TopWash delivers industrial-grade pressure washing for residential and commercial properties. Your surfaces — spotless, every time.</p>
+    <div class="hero-btns">
+      <a href="#contact" class="btn-primary">Get a Free Quote</a>
+      <a href="#services" class="btn-secondary">View Services</a>
+    </div>
+  </div>
+</section>
+
+<!-- STATS BAR -->
+<div class="stats-bar">
+  <div class="stat fade-up">
+    <div class="stat-number">100+</div>
+    <div class="stat-label">Jobs Completed</div>
+  </div>
+  <div class="stat fade-up" style="transition-delay:0.1s">
+    <div class="stat-number">100%</div>
+    <div class="stat-label">Satisfaction Guaranteed</div>
+  </div>
+  <div class="stat fade-up" style="transition-delay:0.2s">
+    <div class="stat-number">5★</div>
+    <div class="stat-label">Average Rating</div>
+  </div>
+  <div class="stat fade-up" style="transition-delay:0.3s">
+    <div class="stat-number">48hr</div>
+    <div class="stat-label">Turnaround</div>
+  </div>
+</div>
+
+<!-- SERVICES -->
+<section class="services" id="services">
+  <div class="section-header fade-up">
+    <span class="section-tag">What We Do</span>
+    <h2 class="section-title">Every Surface,<br>Covered.</h2>
+  </div>
+  <div class="services-grid">
+    <div class="service-card fade-up">
+      <span class="service-icon">🏠</span>
+      <div class="service-name">House Washing</div>
+      <p class="service-desc">Full exterior soft-wash treatment removes mold, mildew, algae, and years of grime from siding, brick, stucco, and more.</p>
+      <div class="service-price"></div>
+    </div>
+    <div class="service-card fade-up" style="transition-delay:0.1s">
+      <span class="service-icon">🚗</span>
+      <div class="service-name">Driveway &amp; Concrete</div>
+      <p class="service-desc">High-pressure surface cleaning blasts oil stains, rust, and embedded dirt from driveways, walkways, and patios.</p>
+      <div class="service-price"></div>
+    </div>
+    <div class="service-card fade-up" style="transition-delay:0.2s">
+      <span class="service-icon">🏗️</span>
+      <div class="service-name">Commercial Buildings</div>
+      <p class="service-desc">Keep your business front looking sharp. We handle storefronts, warehouses, parking garages, and more.</p>
+      <div class="service-price"></div>
+    </div>
+    <div class="service-card fade-up" style="transition-delay:0.1s">
+      <span class="service-icon">🪵</span>
+      <div class="service-name">Deck &amp; Fence</div>
+      <p class="service-desc">Restore weathered wood and composite decking to like-new condition. Prep for staining or just enjoy the clean look.</p>
+      <div class="service-price"></div>
+    </div>
+    <div class="service-card fade-up" style="transition-delay:0.2s">
+      <span class="service-icon">🏊</span>
+      <div class="service-name">Pool Surrounds</div>
+      <p class="service-desc">Safe, effective cleaning for tile, coping, and pool decks. Remove algae and calcium buildup safely.</p>
+      <div class="service-price"></div>
+    </div>
+    <div class="service-card fade-up" style="transition-delay:0.3s">
+      <span class="service-icon">🏢</span>
+      <div class="service-name">Roof Washing</div>
+      <p class="service-desc">Low-pressure soft-wash technique removes black streaks, moss, and lichen without damaging shingles.</p>
+      <div class="service-price"></div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY US -->
+<section class="why" id="why">
+  <div class="why-visual">
+    <div class="why-box why-box-1">
+      <img src="assets/images/before.png" alt="Before" class="why-big-img">
+    </div>
+    <div class="why-box why-box-2">
+      <img src="assets/images/B4afterTopwash-4.png" alt="Visual" class="why-small-img">
+    </div>
+    <div class="why-box why-box-3"></div>
+    <div class="badge">LICENSED &amp; INSURED</div>
+  </div>
+  <div class="why-content fade-up">
+    <span class="section-tag">Why TopWash</span>
+    <h2 class="section-title">Built on<br>Results.</h2>
+    <ul class="why-list">
+      <li class="why-item">
+        <span class="why-num">01</span>
+        <div class="why-text">
+          <strong>Professional Equipment</strong>
+          <p>We use commercial-grade pressure washers rated up to 4000 PSI — far beyond consumer hardware.</p>
+        </div>
+      </li>
+      <li class="why-item">
+        <span class="why-num">02</span>
+        <div class="why-text">
+          <strong>Eco-Friendly Detergents</strong>
+          <p>Our biodegradable, surface-safe cleaning solutions are tough on grime but gentle on your landscaping and waterways.</p>
+        </div>
+      </li>
+      <li class="why-item">
+        <span class="why-num">03</span>
+        <div class="why-text">
+          <strong>Fully Licensed &amp; Insured</strong>
+          <p>Every job is backed by full liability insurance. You're protected, and we take complete responsibility for our work.</p>
+        </div>
+      </li>
+      <li class="why-item">
+        <span class="why-num">04</span>
+        <div class="why-text">
+          <strong>Satisfaction Guaranteed</strong>
+          <p>Not happy with the result? We'll come back and make it right — no questions asked, no extra charge.</p>
+        </div>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section class="process" id="process">
+  <div class="section-header fade-up" style="text-align:center">
+    <span class="section-tag">How It Works</span>
+    <h2 class="section-title">Simple. Fast. Clean.</h2>
+  </div>
+  <div class="process-steps">
+    <div class="step fade-up">
+      <div class="step-circle">1</div>
+      <div class="step-title">Request a Quote</div>
+      <p class="step-desc">Text us with a location or pictures or give us a call. We'll get back to you within hours with a transparent price.</p>
+    </div>
+    <div class="step fade-up" style="transition-delay:0.15s">
+      <div class="step-circle">2</div>
+      <div class="step-title">Schedule a Date</div>
+      <p class="step-desc">Pick a time that works for you. We work around your schedule, including weekends.</p>
+    </div>
+    <div class="step fade-up" style="transition-delay:0.3s">
+      <div class="step-circle">3</div>
+      <div class="step-title">We Show Up</div>
+      <p class="step-desc">Our crew arrives on time, fully equipped. We protect your property before we begin.</p>
+    </div>
+    <div class="step fade-up" style="transition-delay:0.45s">
+      <div class="step-circle">4</div>
+      <div class="step-title">Enjoy the Results</div>
+      <p class="step-desc">Walk the property with us and inspect the finished job. We don't leave until you're satisfied.</p>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials">
+  <div class="section-header fade-up">
+    <span class="section-tag">Reviews</span>
+    <h2 class="section-title">What Clients Say.</h2>
+  </div>
+  <div class="testimonials-grid">
+    <div class="testimonial fade-up">
+      <div class="stars">★★★★★</div>
+      <p>"TopWash transformed my driveway. It looks better than when it was poured. The crew was professional, fast, and cleaned up after themselves. Absolutely recommend."</p>
+      <div class="reviewer">James R. <span>Homeowner, Killearn Estates</span></div>
+    </div>
+    <div class="testimonial fade-up" style="transition-delay:0.15s">
+      <div class="stars">★★★★★</div>
+      <p>"We hired TopWash for our storefront and the difference is night and day. Customers have been commenting on how clean the building looks. We're booking quarterly now."</p>
+      <div class="reviewer">Sandy L. <span>Volcano Hotpot Owner </span></div>
+    </div>
+    <div class="testimonial fade-up" style="transition-delay:0.3s">
+      <div class="stars">★★★★★</div>
+      <p>"My patio had 10 years of grime on it. After TopWash was done, it looked brand new. Honest pricing, no hidden fees. These guys know what they're doing."</p>
+      <div class="reviewer">Derek T. <span> Summerbrooke Homeowner</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section" id="contact">
+  <h2 class="fade-up">Ready to Get<br>Started?</h2>
+  <p class="fade-up" style="transition-delay:0.1s">Free quotes. No obligations. Just cleaner surfaces.</p>
+  <a href="mailto:hello@topwashpressurewashing.com" class="btn-primary fade-up" style="transition-delay:0.2s">Request a Free Quote</a>
+  <div class="phone-bar fade-up" style="transition-delay:0.3s">
+    <span class="phone-label">Text or call us directly</span>
+    <a href="tel:+15551234567">(850)-296-2078</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo"><img src="assets/images/logo.png" srcset="assets/images/logo@2x.png 2x" alt="TopWash logo" class="footer-logo-img"></div>
+  <p>© 2026 TopWash. All rights reserved.</p>
+  <div class="footer-links">
+    <a href="#services">Services</a>
+    <a href="#contact">Contact</a>
+    <a href="#">Privacy</a>
+  </div>
+</footer>
+
+<script>
+  // Scroll-triggered fade-up
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
